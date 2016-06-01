@@ -77,3 +77,11 @@ You'll be prompted to confirm the certificate, and then you should be prompted f
 ![Heritrix](images/heritrix-landing.png "Heritrix landing page")
 
 ## Tour of the Heritrix Web Interface
+
+## Running a simple first job
+
+## Tour of the project directory
+
+## Running a job from a seed list
+
+## Running a job with regex
