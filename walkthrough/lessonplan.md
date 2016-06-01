@@ -65,8 +65,12 @@ How do we access the Heritrix web interface? Just direct your browser to [https:
 
 If you are accessing this url for the first time, you'll get a notification from your browser because we are accessing it over https, and the certificate is unknown. You'll see something like this:
 
+**Firefox**
+
 ![Firefox](images/firefox.png "Firefox")
-![Chrome](images/firefox.png "Chrome")
+
+**Chrome**
+![Chrome](images/chrome.png "Chrome")
 
 You'll be prompted to confirm the certificate, and then you should be prompted for a username and password (vagrant, password). If everything goes correctly, you should see something like this:
 
