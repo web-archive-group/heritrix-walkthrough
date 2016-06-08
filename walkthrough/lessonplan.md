@@ -31,7 +31,7 @@ Once you run these three commands, you will have a running virtual machine with 
 
 You'll now need to connect to the machine. Now you need to connect to the machine. This will be done through your command line, but also through your browser through the Heritrix web interface.
 
-You can connect to the machine's shell via ssh: 
+You can connect to the machine's shell via ssh:
 
 `vagrant ssh`
 
@@ -50,11 +50,11 @@ SHA1:31:4B:C6:94:3E:49:17:12:98:A8:3D:F4:BF:C8:44:6A:2F:FC:0E:2A
 Verify in browser before accepting exception.
 engine listening at port 9191
 operator login set per command-line
-NOTE: We recommend a longer, stronger password, especially if your web 
+NOTE: We recommend a longer, stronger password, especially if your web
 interface will be internet-accessible.
 ```
 
-What does that command actually do? 
+What does that command actually do?
 
 * `/home/vagrant/project/heritrix-3.2.0/bin/heritrix` is the path to the Heritrix executable;
 * `-a vagrant:password` is our credentials we will use to access the web interface of Heritrix;
@@ -83,5 +83,39 @@ You'll be prompted to confirm the certificate, and then you should be prompted f
 ## Tour of the project directory
 
 ## Running a job from a seed list
+
+For this job, we'll take a look at the example of the #elxn42 crawl. The use case here is that we have a list of unique URLs taken from collecting the #exln42 hashtag. Our [seed list](../files/elxn42-tweet-urls.txt) is a line-oriented text file with a URL per line.
+
+How do we setup our `crawler-beans.cxml` to use this seed list? Let's look at lines 86-94:
+
+```xml
+<bean id="seeds" class="org.archive.modules.seeds.TextSeedModule">
+ <property name="textSource">
+  <bean class="org.archive.spring.ConfigFile">
+    <property name="path" value="/home/vagrant/elxn42-tweets-urls.txt" />
+  </bean>
+ </property>
+ <property name='sourceTagSeeds' value='false'/>
+ <property name='blockAwaitingSeedLines' value='-1'/>
+</bean>
+```
+
+Our key is: `<property name="path" value="/home/vagrant/elxn42-tweet-urls.txt" />`. We need only give it the path to the seed list file.
+
+But, what if we only want to capture just the URLs in the seed list, not hop out and crawl from there? Let's jump down to lines 124-132:
+
+```xml
+<!-- ...but REJECT those more than a configured link-hop-count from start... -->
+<bean class="org.archive.modules.deciderules.TooManyHopsDecideRule">
+  <property name="maxHops" value="0" />
+</bean>
+<!-- ...but ACCEPT those more than a configured link-hop-count from start... -->
+<bean class="org.archive.modules.deciderules.TransclusionDecideRule">
+ <property name="maxTransHops" value="0" />
+ <property name="maxSpeculativeHops" value="0" />
+</bean>
+```
+
+We'll need to set our hops to `0`. Otherwise, we might end up crawling most of the internet. :-)
 
 ## Running a job with regex
