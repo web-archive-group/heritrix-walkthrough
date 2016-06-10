@@ -119,3 +119,31 @@ But, what if we only want to capture just the URLs in the seed list, not hop out
 We'll need to set our hops to `0`. Otherwise, we might end up crawling most of the internet. :-)
 
 ## Running a job with regex
+
+For this job, we'll take a look at the example of the crawling a university library website. The use here is we want to capture the library's website, but we want to exclude the library's catalogue. If we have a predicable URL base for all the catalogue records, how do we exclude just that? Regex!
+
+Website: library.yorku.ca
+Catalogue: library.yorku.ca/find
+
+https://github.com/yorkulibraries/heritrix-configurations/blob/master/library.yorku.ca/crawler-beans.cxml
+
+Let's look at lines 160-169. This section of the crawler bean allows us to reject portions of URL based on regex matches.
+
+```xml
+    <!-- ...and REJECT those from a configurable (initially empty) set of URI regexes... -->
+    <bean class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
+          <property name="decision" value="REJECT"/>
+     <!-- <property name="listLogicalOr" value="true" /> -->
+          <property name="regexList">
+            <list>
+              <value>.*/find/.*</value>
+            </list>
+          </property>
+    </bean>
+```
+
+In this case the key is this element: `<value>.*/find/.*</value>` 
+
+We're matching anything before and after the value `/find/` in the URL. So, if the url has `/find/` in it, we reject it. Which allows use to exclude all catalogue records.
+
+
